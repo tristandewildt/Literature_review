@@ -70,4 +70,5 @@ num_words = 4
 # generate LDA model
 ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics, id2word = dictionary, passes=200)
 
-print(ldamodel.print_topics(num_topics, num_words))
+#print(ldamodel.print_topics(num_topics, num_words))
+print(type(doc_set))
