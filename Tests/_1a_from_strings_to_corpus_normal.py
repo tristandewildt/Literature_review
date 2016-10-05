@@ -3,12 +3,8 @@ Created on 23 sep. 2016
 
 @author: tewdewildt
 '''
-from nltk.tokenize import RegexpTokenizer
-from stop_words import get_stop_words
-from nltk.stem.porter import PorterStemmer
-from gensim import corpora, models
-from pprint import pprint
-import gensim
+import logging
+from gensim import corpora
 
 '''
 Link: https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html
@@ -23,21 +19,8 @@ Each token (word) is given an unique integer id. Next, the dictionary must be co
 3. Apply the LDA model.
 4. Examine results
 '''
-tokenizer = RegexpTokenizer(r'\w+')
 
-# create English stop words list
-en_stop = get_stop_words('en')
-
-# Create p_stemmer of class PorterStemmer
-p_stemmer = PorterStemmer()
-    
-# create sample documents
-doc_a = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
-doc_b = "My mother spends a lot of time driving my brother around to baseball practice."
-doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."
-doc_d = "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better."
-doc_e = "Health professionals say that brocolli is good for your health." 
-
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.CRITICAL)
 
 documents = ["Human machine interface for lab abc computer applications",
              "A survey of user opinion of computer system response time",
@@ -48,38 +31,36 @@ documents = ["Human machine interface for lab abc computer applications",
              "The intersection graph of paths in trees",
              "Graph minors IV Widths of trees and well quasi ordering",
              "Graph minors A survey"]
-# compile sample documents into a list
-doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
 
-# list for tokenized documents in loop
-texts = []
+''' remove common words and tokenize'''  
+stoplist = set('for a of the and to in'.split())
+texts = [[word for word in document.lower().split() if word not in stoplist]
+         for document in documents]
 
-# loop through document list
-for i in documents:
-    
-    # clean and tokenize document string
-    raw = i.lower()
-    tokens = tokenizer.tokenize(raw)
+''' remove words that appear only once'''
+from collections import defaultdict
+frequency = defaultdict(int)
+for text in texts:
+    for token in text:
+        frequency[token] += 1
 
-    # remove stop words from tokens
-    stopped_tokens = [i for i in tokens if not i in en_stop]
-    
-    # stem tokens
-    stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
-    
-    # add tokens to list
-    texts.append(stemmed_tokens)
+texts = [[token for token in text if frequency[token] > 1]
+         for text in texts]
 
-# turn our tokenized documents into a id <-> term dictionary
+from pprint import pprint  # pretty-printer
+
+''' documents are converents to vectors'''
 dictionary = corpora.Dictionary(texts)
-    
-# convert tokenized documents into a document-term matrix
+dictionary.save('../Save/deerwester.dict')  # store the dictionary, for future reference
+#print(dictionary.token2id)
+
+''' corpus is saved for later use'''
 corpus = [dictionary.doc2bow(text) for text in texts]
+corpora.MmCorpus.serialize('../Save/deerwester.mm', corpus)
+pprint(corpus)
 
-num_topics = 2
-num_words = 4
-# generate LDA model
-ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics, id2word = dictionary, passes=200)
 
-pprint(ldamodel.print_topics(num_topics, num_words))
-#print(type(doc_set))
+
+
+
+
