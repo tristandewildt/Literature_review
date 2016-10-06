@@ -11,7 +11,7 @@ from gensim import corpora
 from pprint import pprint
 import numpy as np
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.CRITICAL)
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
 ''' optionally a new dictionary is constructed without loading all texts into memory '''
@@ -36,6 +36,7 @@ class MyCorpus(object):
             yield dictionary.doc2bow(line.lower().split())
 
 corpus_memory_friendly = MyCorpus()  # doesn't load the corpus into memory!
+corpora.MmCorpus.serialize('../Save/corpus_memory_friendly.mm', corpus_memory_friendly)
 #print(corpus_memory_friendly)
 
 all_vectors = [vector for vector in corpus_memory_friendly]
