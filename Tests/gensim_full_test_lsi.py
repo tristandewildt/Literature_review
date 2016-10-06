@@ -33,6 +33,9 @@ with open('../data/scopus10.csv', 'r') as f:
     
 ''' Then we clean the data: remove URLs and 'No abstract available',  '''
 
+for i in scopus_list:
+    print(i)
+
 scopus_list_txt = []
 
 tokenizer = RegexpTokenizer(r'\w+')
@@ -100,7 +103,7 @@ num_words = 8
 
 lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=num_topics)
 corpus_lsi = lsi[corpus_tfidf]
-print(lsi.show_topics(num_topics, num_words))
+#print(lsi.show_topics(num_topics, num_words))
 lsi.save('../Save/modelLDA.lsi')
 
 #model = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
@@ -109,7 +112,7 @@ lsi.save('../Save/modelLDA.lsi')
 
 ''' Now we look for similarities between pairs of documents '''
 
-query = "offshore wind energy"
+query = "offshore wind energy social moral acceptability system technical economic"
 vec_bow = dictionary.doc2bow(query.lower().split())
 vec_lsi = lsi[vec_bow]
 
