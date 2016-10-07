@@ -12,7 +12,6 @@ import numpy as np
 import csv
 from six import iteritems
 import re
-from pprint import pprint
 import os
 import bz2
 from nltk.tokenize import RegexpTokenizer
