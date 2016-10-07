@@ -116,7 +116,7 @@ lda.save('../Save/modelLDA.lda')
 query = "The challenge of a purposeful design addressed in this article is to align offshore energy systems not only with technical and economic values like efficiency and profitability but also with moral and social values more generally We elaborate a theoretical framework that allows us to make a systematic inventory of embedded values of offshore energy systems and relate them to their societal acceptability By characterizing both objects and subjects of acceptability we shed light on ways to identify areas of value conflicts that must be addressed in purposeful design We suggest the capabilities approach as a normative theory to deal with the arising value conflicts"
 vec_bow = dictionary.doc2bow(query.lower().split())
 vec_lda = lda[vec_bow]
-print(vec_bow)
+#print(vec_bow)
 
 index = similarities.MatrixSimilarity(lda[corpus_tfidf]) # only possible if the total memory required is lower than the RAM. In any other case, you should use similarities.Similarity
 index.save('../Save/scopus_research.index')
@@ -125,8 +125,9 @@ sims = index[vec_lda]
 #print(list(enumerate(sims))) 
 
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
-pprint(sims)
+#pprint(sims)
 
+print(lda.get_topic_terms(7, topn=10))
 
 
 #bz2_save = bz2.BZ2Compressor(Scopus_corpus)

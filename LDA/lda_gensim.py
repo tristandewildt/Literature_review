@@ -96,7 +96,7 @@ tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
 num_topics = 20
-num_words = 8
+num_words = 5
 
 
 
@@ -106,7 +106,7 @@ num_words = 8
 #print(lsi.show_topics(num_topics, num_words))
 #lsi.save('../Save/modelLDA.lsi')
 
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=20)
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=400)
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
 #pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
@@ -116,7 +116,7 @@ lda.save('../Save/modelLDA.lda')
 query = "The challenge of a purposeful design addressed in this article is to align offshore energy systems not only with technical and economic values like efficiency and profitability but also with moral and social values more generally We elaborate a theoretical framework that allows us to make a systematic inventory of embedded values of offshore energy systems and relate them to their societal acceptability By characterizing both objects and subjects of acceptability we shed light on ways to identify areas of value conflicts that must be addressed in purposeful design We suggest the capabilities approach as a normative theory to deal with the arising value conflicts"
 vec_bow = dictionary.doc2bow(query.lower().split())
 vec_lda = lda[vec_bow]
-print(vec_bow)
+#print(vec_bow)
 
 index = similarities.MatrixSimilarity(lda[corpus_tfidf]) # only possible if the total memory required is lower than the RAM. In any other case, you should use similarities.Similarity
 index.save('../Save/scopus_research.index')
