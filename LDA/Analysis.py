@@ -8,17 +8,7 @@ import logging
 import gensim
 from gensim import corpora, models, similarities
 from pprint import pprint
-import numpy as np
-import csv
-from six import iteritems
-import re
-from pprint import pprint
-import os
-import bz2
-from nltk.tokenize import RegexpTokenizer
-from stop_words import get_stop_words
-from nltk.stem.porter import PorterStemmer
-from csv import Dialect
+
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.CRITICAL)
 
@@ -43,7 +33,7 @@ sims = sorted(enumerate(sims), key=lambda item: -item[1])
 #print(lda.get_term_topics(327)) # topics for one term
 #pprint(lda.get_topic_terms(0)) # terms for one topic
 #pprint(lda.print_topics()) # print all topics
-#pprint(lda.get_document_topics(corpus_tfidf[7]))
+pprint(lda.get_document_topics(corpus_tfidf[7]))
 
 
 
