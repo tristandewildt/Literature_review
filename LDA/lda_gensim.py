@@ -21,13 +21,13 @@ from csv import Dialect
 
 
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.CRITICAL)
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
 ''' First we import the scopus csv'''
-with open('../data/scopus10.csv', 'r') as f:
+with open('../data/scopus11.csv', 'r') as f:
     reader = csv.reader(f)
-    scopus_list = list(reader)
+    scopus_list = list(reader[1:])
     
     
 ''' Then we clean the data: remove URLs and 'No abstract available',  '''
@@ -50,6 +50,7 @@ for i in scopus_list:
     t.write(str(i)+'\n')
     raw = i.lower()
     tokens = tokenizer.tokenize(raw)
+    #print(tokens)
 
 #Then we remove stop words and words that only appear once
 
@@ -58,13 +59,16 @@ for i in scopus_list:
     stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
     scopus_list_txt.append(stemmed_tokens)
     
-t.close()
+
 
 ''' Then we save it to a text file '''
 f = open('../Save/scopus_list_txt.txt', 'w')
 for item in scopus_list_txt:
     f.write(str(item)+'\n')
 f.close()
+
+#print(scopus_list_txt[68])
+
 
 ''' Now we create the dictionary'''
 dictionary = corpora.Dictionary(scopus_list_txt)
@@ -94,18 +98,18 @@ Scopus_corpus = corpora.MmCorpus('../Save/scopus_corpus.mm')
 tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
-num_topics = 20
+num_topics = 100
 num_words = 5
 
 
-
+# topics = 20 and passes = 1000 seems to provide interesting results.
 
 #lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=num_topics)
 #corpus_lsi = lsi[corpus_tfidf]
 #print(lsi.show_topics(num_topics, num_words))
 #lsi.save('../Save/modelLDA.lsi')
 
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=400)
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=100)
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
 #pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
@@ -113,15 +117,17 @@ lda.save('../Save/modelLDA.lda')
 ''' Now we look for similarities between pairs of documents '''
 
 query = "The challenge of a purposeful design addressed in this article is to align offshore energy systems not only with technical and economic values like efficiency and profitability but also with moral and social values more generally We elaborate a theoretical framework that allows us to make a systematic inventory of embedded values of offshore energy systems and relate them to their societal acceptability By characterizing both objects and subjects of acceptability we shed light on ways to identify areas of value conflicts that must be addressed in purposeful design We suggest the capabilities approach as a normative theory to deal with the arising value conflicts"
-vec_bow = dictionary.doc2bow(query.lower().split())
+split_lower_query = query.lower().split()
+stopped_query = [f for f in split_lower_query if not f in en_stop]
+stemmed_query = [p_stemmer.stem(h) for h in stopped_query]
+
+vec_bow = dictionary.doc2bow(stemmed_query)
 vec_lda = lda[vec_bow]
-#print(vec_bow)
 
 index = similarities.MatrixSimilarity(lda[corpus_tfidf]) # only possible if the total memory required is lower than the RAM. In any other case, you should use similarities.Similarity
 index.save('../Save/scopus_research.index')
 
 sims = index[vec_lda]
-#print(list(enumerate(sims))) 
 
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
 pprint(sims)
