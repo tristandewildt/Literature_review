@@ -18,6 +18,7 @@ from nltk.tokenize import RegexpTokenizer
 from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 from csv import Dialect
+from itertools import islice
 
 
 
@@ -26,10 +27,10 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 ''' First we import the scopus csv'''
 with open('../data/scopus11.csv', 'r') as f:
-    reader = csv.reader(f)
-    scopus_list = list(reader[1:])
-    
-    
+    #next(f)
+    reader = csv.reader(f)   
+    scopus_list = list(reader)
+
 ''' Then we clean the data: remove URLs and 'No abstract available',  '''
 
 scopus_list_txt = []
@@ -50,7 +51,6 @@ for i in scopus_list:
     t.write(str(i)+'\n')
     raw = i.lower()
     tokens = tokenizer.tokenize(raw)
-    #print(tokens)
 
 #Then we remove stop words and words that only appear once
 
@@ -98,7 +98,8 @@ Scopus_corpus = corpora.MmCorpus('../Save/scopus_corpus.mm')
 tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
-num_topics = 100
+
+num_topics = 10
 num_words = 5
 
 
@@ -109,7 +110,7 @@ num_words = 5
 #print(lsi.show_topics(num_topics, num_words))
 #lsi.save('../Save/modelLDA.lsi')
 
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=100)
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=200)
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
 #pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
