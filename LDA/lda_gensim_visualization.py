@@ -18,7 +18,6 @@ from scipy.spatial.distance import pdist, squareform
 
 matplotlib.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')
 
-#import pyLDAvis.gensim
 
 en_stop = get_stop_words('en')
 p_stemmer = PorterStemmer()
@@ -30,7 +29,7 @@ dictionary = corpora.Dictionary.load('../Save/scopus_list.dict')
 corpus_tfidf = corpora.MmCorpus('../Save/scopus_corpus.mm')
 
 ''' Find word lists '''
-n_topics = 200
+n_topics = 10
 Find_word_lists = False
 if Find_word_lists == True:
     for i in range(1, n_topics):

@@ -26,7 +26,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 
 ''' First we import the scopus csv'''
-with open('../data/scopus11.csv', 'r') as f:
+with open('../data/scopus_value_smart_grid.csv', 'r') as f:
     #next(f)
     reader = csv.reader(f)   
     scopus_list = list(reader)
@@ -76,6 +76,7 @@ once_ids = [tokenid for tokenid, docfreq in iteritems(dictionary.dfs) if docfreq
 dictionary.filter_tokens(once_ids)  # remove stop words and words that appear only once
 dictionary.compactify()  # remove gaps in id sequence after words that were removed
 dictionary.save('../Save/scopus_list.dict')
+#dictionary.save_as_text('../Save/scopus_list_dict.txt')
 
 ''' And we create the corpus'''
 ''' What is done hereunder is a trial. If there are problems in the code or in the quality of the results, problems might come from here.'''
@@ -99,48 +100,16 @@ tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
 
-num_topics = 10
+num_topics = 50
 num_words = 5
 
-
-# topics = 20 and passes = 1000 seems to provide interesting results.
-
-#lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=num_topics)
-#corpus_lsi = lsi[corpus_tfidf]
-#print(lsi.show_topics(num_topics, num_words))
-#lsi.save('../Save/modelLDA.lsi')
-
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=200)
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=1000)# chuncksize can be added, as well as update_every
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
 #pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
 
-''' Now we look for similarities between pairs of documents '''
-
-query = "The challenge of a purposeful design addressed in this article is to align offshore energy systems not only with technical and economic values like efficiency and profitability but also with moral and social values more generally We elaborate a theoretical framework that allows us to make a systematic inventory of embedded values of offshore energy systems and relate them to their societal acceptability By characterizing both objects and subjects of acceptability we shed light on ways to identify areas of value conflicts that must be addressed in purposeful design We suggest the capabilities approach as a normative theory to deal with the arising value conflicts"
-split_lower_query = query.lower().split()
-stopped_query = [f for f in split_lower_query if not f in en_stop]
-stemmed_query = [p_stemmer.stem(h) for h in stopped_query]
-
-vec_bow = dictionary.doc2bow(stemmed_query)
-vec_lda = lda[vec_bow]
-
-index = similarities.MatrixSimilarity(lda[corpus_tfidf]) # only possible if the total memory required is lower than the RAM. In any other case, you should use similarities.Similarity
-index.save('../Save/scopus_research.index')
-
-sims = index[vec_lda]
-
-sims = sorted(enumerate(sims), key=lambda item: -item[1])
-pprint(sims)
-
-
-
 #bz2_save = bz2.BZ2Compressor(Scopus_corpus)
 #bz2_save.save('../Save/scopus_research.bz2')
-
-
-
-
 
 
 
