@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
-encoding//sLDA/lda/llda.py=utf-8
-encoding//sLDA/lda/llda_nltk.py=utf-8
+encoding//CMT/ctmmodel.py=utf-8
+encoding//sLDA/llda.py=utf-8
+encoding//sLDA/llda_nltk.py=utf-8

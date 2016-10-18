@@ -100,12 +100,12 @@ tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
 
-num_topics = 50
-num_words = 5
+num_topics = 10
+num_words = 10
 
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=1000)# chuncksize can be added, as well as update_every
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=10)# chuncksize can be added, as well as update_every
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
-#pprint(lda.show_topics(num_topics, num_words))
+pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
 
 #bz2_save = bz2.BZ2Compressor(Scopus_corpus)
