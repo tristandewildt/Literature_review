@@ -44,7 +44,7 @@ if similarities_between_pairs == True:
     sims = index[vec_lda]
     
     sims = sorted(enumerate(sims), key=lambda item: -item[1])
-    #pprint(sims)
+    pprint(sims)
 
     
 ''' Get topics '''

@@ -27,7 +27,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 
 ''' First we import the scopus csv'''
-with open('../data/scopus_value_smart_grid.csv', 'r') as f:
+with open('../data/scopus10.csv', 'r') as f:
     #next(f)
     reader = csv.reader(f)   
     scopus_list = list(reader)
@@ -98,9 +98,10 @@ Scopus_corpus = corpora.MmCorpus('../Save/scopus_corpus.mm')
 tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
-ctm = CtmModel(corpus=Scopus_corpus, num_topics=100, id2word=dictionary)
+ctm = CtmModel(corpus=Scopus_corpus, num_topics=100, id2word=dictionary, em_max_iterations=10)
 ctm.save('../Save/modelctm.ctm')
 
+#ctm_saved = ctm.load('../Save/modelctm.ctm') 
 x = ctm.show_topics()
 print(x)
 

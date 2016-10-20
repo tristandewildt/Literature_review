@@ -26,7 +26,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 
 ''' First we import the scopus csv'''
-with open('../data/scopus_value_smart_grid.csv', 'r') as f:
+with open('../data/scopus_smart_grid_value(syn).csv', 'r') as f:
     #next(f)
     reader = csv.reader(f)   
     scopus_list = list(reader)
@@ -47,20 +47,22 @@ for i in scopus_list:
     i = re.sub(r'http\S+', '', i)
     i = re.sub('\W+',' ', i)
     i =i.strip("\t").strip("abstract available]")
+        
     
     t.write(str(i)+'\n')
     raw = i.lower()
+    raw = ''.join([a for a in raw if not a.isdigit()])
     tokens = tokenizer.tokenize(raw)
 
 #Then we remove stop words and words that only appear once
-
-    stopped_tokens = [i for i in tokens if not i in en_stop]
-    # stem tokens
-    stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
-    scopus_list_txt.append(stemmed_tokens)
     
 
-
+    stopped_tokens = [h for h in tokens if not h in en_stop]
+    
+    # stem tokens
+    stemmed_tokens = [p_stemmer.stem(h) for h in stopped_tokens]
+    scopus_list_txt.append(stemmed_tokens)
+    
 ''' Then we save it to a text file '''
 f = open('../Save/scopus_list_txt.txt', 'w')
 for item in scopus_list_txt:
@@ -100,10 +102,10 @@ tfidf = models.TfidfModel(Scopus_corpus)
 corpus_tfidf = tfidf[Scopus_corpus]
 
 
-num_topics = 10
+num_topics = 250
 num_words = 10
 
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=10)# chuncksize can be added, as well as update_every
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=100, iterations=500)# chuncksize can be added, as well as update_every
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
 pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
