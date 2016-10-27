@@ -105,7 +105,7 @@ corpus_tfidf = tfidf[Scopus_corpus]
 num_topics = 250
 num_words = 10
 
-lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=100, iterations=500)# chuncksize can be added, as well as update_every
+lda = gensim.models.ldamodel.LdaModel(corpus_tfidf, num_topics, id2word = dictionary, passes=10, iterations=50)# chuncksize can be added, as well as update_every
 #lda = models.LdaModel(corpus_tfidf, id2word=dictionary, num_topics = num_topics)
 pprint(lda.show_topics(num_topics, num_words))
 lda.save('../Save/modelLDA.lda')
