@@ -19,7 +19,7 @@ import sys
 
 #print(sys.path[0])
 
-from CMT.ctmmodel import CtmModel
+from CTM.ctmmodel import CtmModel
 
 
 
