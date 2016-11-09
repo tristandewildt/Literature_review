@@ -41,12 +41,18 @@ p_stemmer = PorterStemmer()
 
 t = open('../Save/scopus_list_no_tolken.txt', 'w')
 
+for y in scopus_list:
+    print(y)
+
 for i in scopus_list:
     i = ''.join(i)
     i = re.sub(r'"' or r'[', ' ', i)
     i = re.sub(r'http\S+', '', i)
     i = re.sub('\W+',' ', i)
     i =i.strip("\t").strip("abstract available]")
+
+        
+    
         
     
     t.write(str(i)+'\n')
@@ -66,6 +72,7 @@ for i in scopus_list:
 ''' Then we save it to a text file '''
 f = open('../Save/scopus_list_txt.txt', 'w')
 for item in scopus_list_txt:
+    
     f.write(str(item)+'\n')
 f.close()
 
